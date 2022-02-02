@@ -1,110 +1,129 @@
-#include <Arduino.h>
+#include "Adafruit_FONA.h"
 
-// SIM card PIN (leave empty, if not defined)
-const char simPIN[] = "";
+#define SIM800L_RX 27
+#define SIM800L_TX 26
+#define SIM800L_PWRKEY 4
+#define SIM800L_RST 5
+#define SIM800L_POWER 23
 
-// Your phone number to send SMS: + (plus sign) and country code, for Portugal +351, followed by phone number
-// SMS_TARGET Example for Portugal +351XXXXXXXXX
+char replybuffer[255];
 
-/* Noa vimla */
-#define SMS_TARGET "+46706628353"
+HardwareSerial *sim800lSerial = &Serial1;
+Adafruit_FONA sim800l = Adafruit_FONA(SIM800L_PWRKEY);
 
-/* Noas kontantkort */
-// #define SMS_TARGET "+46738079358"
+uint8_t readline(char *buff, uint8_t maxbuff, uint16_t timeout = 0);
 
-/* Hanna */
-// #define SMS_TARGET "+46763107286"
-
-
-// Configure TinyGSM library
-#define TINY_GSM_MODEM_SIM800	// Modem is SIM800
-#define TINY_GSM_RX_BUFFER 1024 // Set RX buffer to 1Kb
-
-#include <Wire.h>
-#include <TinyGsmClient.h>
-
-// TTGO T-Call pins
-#define MODEM_RST 5
-#define MODEM_PWKEY 4
-#define MODEM_POWER_ON 23
-#define MODEM_TX 27
-#define MODEM_RX 26
-#define I2C_SDA 21
-#define I2C_SCL 22
-
-// Set serial for debug console (to Serial Monitor, default speed 115200)
-#define SerialMon Serial
-// Set serial for AT commands (to SIM800 module)
-#define SerialAT Serial1
-
-TinyGsm modem(SerialAT);
-
-#define IP5306_ADDR 0x75
-#define IP5306_REG_SYS_CTL0 0x00
-
-bool setPowerBoostKeepOn(int en)
-{
-	Wire.beginTransmission(IP5306_ADDR);
-	Wire.write(IP5306_REG_SYS_CTL0);
-	if (en)
-	{
-		Wire.write(0x37); // Set bit1: 1 enable 0 disable boost keep on
-	}
-	else
-	{
-		Wire.write(0x35); // 0x37 is default reg value
-	}
-	return Wire.endTransmission() == 0;
-}
+String smsString = "";
 
 void setup()
 {
-	// Set console baud rate
-	SerialMon.begin(115200);
+	pinMode(SIM800L_POWER, OUTPUT);
+	digitalWrite(SIM800L_POWER, HIGH);
 
-	// Keep power when running from battery
-	Wire.begin(I2C_SDA, I2C_SCL);
-	bool isOk = setPowerBoostKeepOn(1);
-	SerialMon.println(String("IP5306 KeepOn ") + (isOk ? "OK" : "FAIL"));
+	Serial.begin(115200);
 
-	// Set modem reset, enable, power pins
-	pinMode(MODEM_PWKEY, OUTPUT);
-	pinMode(MODEM_RST, OUTPUT);
-	pinMode(MODEM_POWER_ON, OUTPUT);
-	digitalWrite(MODEM_PWKEY, LOW);
-	digitalWrite(MODEM_RST, HIGH);
-	digitalWrite(MODEM_POWER_ON, HIGH);
 
-	// Set GSM module baud rate and UART pins
-	SerialAT.begin(115200, SERIAL_8N1, MODEM_RX, MODEM_TX);
-	delay(3000);
+	// Make sure sim800l library isn't printing a lot of garbage
+	#ifdef ADAFRUIT_FONA_DEBUG
+	printf("Undefine ADAFRUIT_FONA_DEBUG to avoid garbage prints\n");
+	while(1){delay(100000);}
+	#endif
 
-	// Restart SIM800 module, it takes quite some time
-	// To skip it, call init() instead of restart()
-	SerialMon.println("Initializing modem...");
-	modem.restart();
-	// use modem.init() if you don't need the complete restart
+	printf("ESP32 with GSM SIM800L\n");
+	printf("Initializing....\n");
 
-	// Unlock your SIM card with a PIN if needed
-	if (strlen(simPIN) && modem.getSimStatus() != 3)
+	delay(10000);
+
+	// Make it slow so its easy to read!
+	sim800lSerial->begin(115200, SERIAL_8N1, SIM800L_TX, SIM800L_RX);
+	if (!sim800l.begin(*sim800lSerial))
 	{
-		bool res = modem.simUnlock(simPIN);
-		printf("unlock sim returned: %d\n", res);
+		printf("Couldn't find GSM SIM800L\n");
+		while (1)
+			;
+	}
+	printf("GSM SIM800L is OK\n");
+
+	char imei[16] = {0}; // MUST use a 16 character buffer for IMEI!
+	uint8_t imeiLen = sim800l.getIMEI(imei);
+	if (imeiLen > 0)
+	{
+		printf("SIM card IMEI: %s", imei);
 	}
 
-	// To send an SMS, call modem.sendSMS(SMS_TARGET, smsMessage)
-	String smsMessage = "Hello from ESP32!";
-	if (modem.sendSMS(SMS_TARGET, smsMessage))
-	{
-		SerialMon.println(smsMessage);
-	}
-	else
-	{
-		SerialMon.println("SMS failed to send");
-	}
+	// Set up the FONA to send a +CMTI notification when an SMS is received
+	sim800lSerial->print("AT+CNMI=2,1\r\n");
+
+	printf("GSM SIM800L Ready\n");
+
+	sim800l.sendSMS("+46706628353", "Started");
+	printf("Sent sms\n");
 }
+
+char sim800lNotificationBuffer[64]; //for notifications from the FONA
+char smsBuffer[250];
 
 void loop()
 {
-	delay(1);
+	char *bufPtr = sim800lNotificationBuffer; //handy buffer pointer
+
+	if (sim800l.available())
+	{
+		int slot = 0; // this will be the slot number of the SMS
+		int charCount = 0;
+
+		// Read the notification into fonaInBuffer
+		do
+		{
+			*bufPtr = sim800l.read();
+			Serial.write(*bufPtr);
+			delay(1);
+		} while ((*bufPtr++ != '\n') && (sim800l.available()) && (++charCount < (sizeof(sim800lNotificationBuffer) - 1)));
+
+		//Add a terminal NULL to the notification string
+		*bufPtr = 0;
+
+		//Scan the notification string for an SMS received notification.
+		//  If it's an SMS message, we'll get the slot number in 'slot'
+		if (1 == sscanf(sim800lNotificationBuffer, "+CMTI: \"SM\",%d", &slot))
+		{
+			char callerIDbuffer[32]; //we'll store the SMS sender number in here
+
+			// Retrieve SMS sender address/phone number.
+			if (!sim800l.getSMSSender(slot, callerIDbuffer, 31))
+			{
+				printf("Didn't find SMS message in slot!\n");
+				
+			}
+			printf("Received sms FROM: %s\n", callerIDbuffer);
+
+			// Retrieve SMS value.
+			uint16_t smslen;
+			// Pass in buffer and max len!
+			if (sim800l.readSMS(slot, smsBuffer, 250, &smslen))
+			{
+				smsString = String(smsBuffer);
+				printf("%s\n", smsString);
+			}
+
+			// if (!sim800l.sendSMS(callerIDbuffer, "Relay is activated."))
+			if (!sim800l.sendSMS("+46706628353", "Relay is activated."))
+			{
+				printf("failed to send response\n");
+			}
+
+			while (1)
+			{
+				if (sim800l.deleteSMS(slot))
+				{
+					printf("deleted sms\n");
+					break;
+				}
+				else
+				{
+					sim800l.print(F("AT+CMGD=?\r\n"));
+				}
+			}
+		}
+	}
 }
