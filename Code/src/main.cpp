@@ -5,7 +5,16 @@ const char simPIN[] = "";
 
 // Your phone number to send SMS: + (plus sign) and country code, for Portugal +351, followed by phone number
 // SMS_TARGET Example for Portugal +351XXXXXXXXX
+
+/* Noa vimla */
 #define SMS_TARGET "+46706628353"
+
+/* Noas kontantkort */
+// #define SMS_TARGET "+46738079358"
+
+/* Hanna */
+// #define SMS_TARGET "+46763107286"
+
 
 // Configure TinyGSM library
 #define TINY_GSM_MODEM_SIM800	// Modem is SIM800
@@ -79,7 +88,8 @@ void setup()
 	// Unlock your SIM card with a PIN if needed
 	if (strlen(simPIN) && modem.getSimStatus() != 3)
 	{
-		modem.simUnlock(simPIN);
+		bool res = modem.simUnlock(simPIN);
+		printf("unlock sim returned: %d\n", res);
 	}
 
 	// To send an SMS, call modem.sendSMS(SMS_TARGET, smsMessage)
