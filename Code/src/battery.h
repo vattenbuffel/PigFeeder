@@ -6,6 +6,6 @@
 
 bool battery_init();
 
-float battery_read(int batter_number);
+float battery_get(int batter_number);
 
 #endif /* BATTERY_H_ */

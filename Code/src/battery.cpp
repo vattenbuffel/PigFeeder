@@ -24,7 +24,7 @@ float map_voltage(float volt){
 
 }
 
-float battery_read(int battery_number){
+float battery_get(int battery_number){
     byte pin;
     if (battery_number == 1){
         pin = BATTERY_GPIO_1;

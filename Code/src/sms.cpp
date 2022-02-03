@@ -69,7 +69,7 @@ bool sms_init()
     while(-1 == sim800l.getNumSMS()){delay(10);}
     while(0 != sim800l.getNumSMS()){
         sim800l.deleteSMS(i);
-        printf("cleasning idx %d\n", i);
+        printf("cleasning idx %u\n", i);
         i++;
     }
 
@@ -82,7 +82,7 @@ bool sms_send(char *number, char *msg)
     return sim800l.sendSMS(number, msg);
 }
 
-int sms_get(char **number_sending, char **msg)
+bool sms_get(char **number_sending, char **msg)
 {
     uint16_t dummy;
     int num_sms_left = sim800l.getNumSMS(); 
@@ -102,12 +102,12 @@ int sms_get(char **number_sending, char **msg)
         }
     } else{
         printf("Failed to read sms\n");
-        return -1;
+        return false;
     }
 
     *number_sending = callerIDbuffer;
     *msg = smsBuffer;
-    return num_sms_left-1;
+    return true;
 }
 
 bool sms_waiting_cnt_get()

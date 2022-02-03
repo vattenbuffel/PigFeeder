@@ -1,8 +1,8 @@
-Motor Start: Starts the motor. Automatically stops after a set time
-Motor Stop: Stops the motor
+Motor start: Starts the motor. Automatically stops after a set time
+Motor stop: Stops the motor
 Motor time set x: Sets the time on for motor
 Motor time get: Sends a sms with the time on for motor
-Batteries: Sends a sms the voltage levels of the batteries
+Battery: Sends a sms the voltage levels of the batteries
 Sleep time set x: Sets the sleep time
 Sleep time get: Sends a sms with the sleep time
-Saldo check: Check saldo
+Saldo check: Check saldo. Not implemented.
