@@ -60,9 +60,9 @@ bool sms_init()
 
     printf("GSM SIM800L Ready\n");
 
-    // sim800l.sendSMS("NUMBER_NOA", "Started");
+    sim800l.sendSMS("NUMBER_NOA", "Started");
     // sim800l.sendSMS("NUMBER_OLOF", "Started");
-    // printf("Sent started sms\n");
+    printf("Sent started sms\n");
 
     return true;
 }
