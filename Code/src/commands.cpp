@@ -19,7 +19,8 @@ static bool extract_number(char* str, double *number){
         return false;
     }
 
-    str[i] = 0;
+    /* -1 to remove the trailing space */
+    str[i-1] = 0;
     printf("after removing number from string, string is: %s\n", str);
 
     *number = atof(str+i);
@@ -85,7 +86,7 @@ static bool cmd_saldo_get(){
 
 static bool cmd_invalid(char* sms_number, char* cmd_str){
     char msg[256];
-    snprintf(msg, sizeof(msg), "Invalid command: %s", cmd_str);
+    snprintf(msg, sizeof(msg), "Invalid command: \"%s\"", cmd_str);
     printf("%s %s\n", __func__, msg);
     return sms_send(sms_number, msg);
 }
@@ -94,21 +95,29 @@ bool command_handle(char* cmd_str, char* sms_number){
     bool res = true;
     double number;
 
-    extract_number(cmd_str, &number);
+    bool number_exist = extract_number(cmd_str, &number);
 
 	if(0 == strcmp(cmd_str, "Motor start")){
         res = cmd_motor_start(sms_number);
 	} else if(0 == strcmp(cmd_str, "Motor stop")){
         res = cmd_motor_stop(sms_number);
 	} else if(0 == strcmp(cmd_str, "Motor time set")){
-        res = cmd_motor_time_set(sms_number, number);
+        if(number_exist){
+            res = cmd_motor_time_set(sms_number, number);
+        } else {
+            res = cmd_invalid(sms_number, cmd_str);
+        }
 	} else if(0 == strcmp(cmd_str, "Motor time get")){
         res = cmd_motor_time_get(sms_number );
 	} else if(0 == strcmp(cmd_str, "Battery")){
         res = cmd_battery_get(sms_number);
-	} else if(0 == strcmp(cmd_str, "sleep time set")){
-        res = cmd_sleep_time_set(sms_number, number);
-	} else if(0 == strcmp(cmd_str, "sleep time get")){
+	} else if(0 == strcmp(cmd_str, "Sleep time set")){
+        if(number_exist){
+            res = cmd_sleep_time_set(sms_number, number);
+        } else {
+            res = cmd_invalid(sms_number, cmd_str);
+        }
+	} else if(0 == strcmp(cmd_str, "Sleep time get")){
         res = cmd_sleep_time_get(sms_number);
 	} else if(0 == strcmp(cmd_str, "Saldo check")){
         res = cmd_saldo_get();
