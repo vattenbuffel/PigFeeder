@@ -1,4 +1,3 @@
-
 #include "sms.h"
 #include "Adafruit_FONA.h"
 
@@ -15,10 +14,6 @@ char replybuffer[255];
 
 HardwareSerial *sim800lSerial = &Serial1;
 Adafruit_FONA sim800l = Adafruit_FONA(SIM800L_PWRKEY);
-
-uint8_t readline(char *buff, uint8_t maxbuff, uint16_t timeout = 0);
-
-String smsString = "";
 
 char sim800lNotificationBuffer[64]; //for notifications from the FONA
 char smsBuffer[250];
@@ -65,13 +60,14 @@ bool sms_init()
 
     printf("GSM SIM800L Ready\n");
 
-    // sim800l.sendSMS("+46706628353", "Started");
-    // printf("Sent sms\n");
+    // sim800l.sendSMS("NUMBER_NOA", "Started");
+    // sim800l.sendSMS("NUMBER_OLOF", "Started");
+    // printf("Sent started sms\n");
 
     return true;
 }
 
-bool sms_send( char *number, char *msg)
+bool sms_send(char *number, char *msg)
 {
     printf("sending sms with msg %s to number %s\n", msg, number);
     return sim800l.sendSMS(number, msg);
@@ -105,21 +101,18 @@ bool sms_received_get(char **number_sending, char **msg)
             // Retrieve SMS sender address/phone number.
             if (!sim800l.getSMSSender(slot, callerIDbuffer, 31))
             {
-                printf("Didn't find SMS message in slot!\n");
+                printf("Received sms but couldn't find SMS message in slot!\n");
             }
-            printf("Received sms FROM: %s\n", callerIDbuffer);
 
             // Retrieve SMS value.
             uint16_t smslen;
             // Pass in buffer and max len!
             if (sim800l.readSMS(slot, smsBuffer, 250, &smslen))
             {
-                smsString = String(smsBuffer);
-                printf("%s\n", smsString);
+                printf("Received sms from %s with msg: %s\n", callerIDbuffer, smsBuffer);
             }
 
             while (1)
-
             {
                 if (sim800l.deleteSMS(slot))
                 {
