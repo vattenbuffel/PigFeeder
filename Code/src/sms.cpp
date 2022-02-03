@@ -21,17 +21,18 @@ char callerIDbuffer[32]; //we'll store the SMS sender number in here
 
 bool sms_init()
 {
+    // Make sure sim800l library isn't printing a lot of garbage
+    #ifdef ADAFRUIT_FONA_DEBUG
+        printf("Undefine ADAFRUIT_FONA_DEBUG to avoid garbage prints\n");
+        while (1)
+        {
+            delay(100000);
+        }
+    #endif
+
     pinMode(SIM800L_POWER, OUTPUT);
     digitalWrite(SIM800L_POWER, HIGH);
 
-// Make sure sim800l library isn't printing a lot of garbage
-#ifdef ADAFRUIT_FONA_DEBUG
-    printf("Undefine ADAFRUIT_FONA_DEBUG to avoid garbage prints\n");
-    while (1)
-    {
-        delay(100000);
-    }
-#endif
 
     printf("ESP32 with GSM SIM800L\n");
     printf("Initializing....\n");
@@ -44,7 +45,7 @@ bool sms_init()
     {
         printf("Couldn't find GSM SIM800L\n");
         while (1)
-            ;
+            delay(100000);
     }
     printf("GSM SIM800L is OK\n");
 
