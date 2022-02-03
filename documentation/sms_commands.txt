@@ -1,0 +1,5 @@
+Start: Starts the motor. Automatically stops after a set time
+Stop: Stops the motor
+Batteries: Sends a sms the voltage levels of the batteries
+Sleep time set: Sets the sleep time
+Sleep time get: Sends a sms with the sleep time
