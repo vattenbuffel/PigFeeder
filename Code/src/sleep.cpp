@@ -10,15 +10,14 @@ bool sleep_init(){
     return true;
 }
 
-void sleep_activate(){
+void sleep_go(){
     if(enabled){
-    printf("Going to sleep\n");
-    delay(100);
-	Serial.flush();
-	esp_light_sleep_start();
-    printf("woke up\n");
-}
-    else{
+        printf("Going to sleep\n");
+        delay(100);
+        Serial.flush();
+        esp_light_sleep_start();
+        printf("woke up\n");
+    } else{
         printf("%s: sleep is disabled\n", __func__);
     }
 }

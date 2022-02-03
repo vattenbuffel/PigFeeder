@@ -5,7 +5,7 @@
 
 bool sleep_init();
 
-void sleep_activate();
+void sleep_go();
 
 bool sleep_time_set_us(uint64_t time_us);
 

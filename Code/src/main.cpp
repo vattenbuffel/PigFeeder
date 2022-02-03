@@ -50,7 +50,7 @@ void loop()
 	/* Check if motor should turn off */
 	motor_timeout();
 
-	// sleep_activate();
+	sleep_go();
 
 	// sms_send("+46706628353", "woke up");
 }
