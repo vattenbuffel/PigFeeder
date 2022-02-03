@@ -33,9 +33,7 @@ bool sms_init()
     pinMode(SIM800L_POWER, OUTPUT);
     digitalWrite(SIM800L_POWER, HIGH);
 
-
-    printf("ESP32 with GSM SIM800L\n");
-    printf("Initializing....\n");
+    printf("SMS initializing....\n");
 
     delay(10000);
 
@@ -59,11 +57,21 @@ bool sms_init()
     // Set up the FONA to send a +CMTI notification when an SMS is received
     sim800lSerial->print("AT+CNMI=2,1\r\n");
 
+    delay(1000);
     printf("GSM SIM800L Ready\n");
 
-    sim800l.sendSMS("NUMBER_NOA", "Started");
-    // sim800l.sendSMS("NUMBER_OLOF", "Started");
+    sim800l.sendSMS(NUMBER_NOA, "Started");
+    // sim800l.sendSMS(NUMBER_OLOF, "Started");
     printf("Sent started sms\n");
+
+    // Cleased received sms
+    int8_t i = 0;
+    while(-1 == sim800l.getNumSMS()){delay(10);}
+    while(0 != sim800l.getNumSMS()){
+        sim800l.deleteSMS(i);
+        printf("cleasning idx %d\n", i);
+        i++;
+    }
 
     return true;
 }
@@ -74,67 +82,35 @@ bool sms_send(char *number, char *msg)
     return sim800l.sendSMS(number, msg);
 }
 
-bool sms_received_get(char **number_sending, char **msg)
+int sms_get(char **number_sending, char **msg)
 {
-    char *bufPtr = sim800lNotificationBuffer; //handy buffer pointer
-
-    if (sim800l.available())
-    {
-        int slot = 0; // this will be the slot number of the SMS
-        int charCount = 0;
-
-        // Read the notification into fonaInBuffer
-        do
-        {
-            *bufPtr = sim800l.read();
-            Serial.write(*bufPtr);
-            delay(1);
-        } while ((*bufPtr++ != '\n') && (sim800l.available()) && (++charCount < (sizeof(sim800lNotificationBuffer) - 1)));
-
-        // Add a terminal NULL to the notification string
-        *bufPtr = 0;
-
-        // Scan the notification string for an SMS received notification.
-        // If it's an SMS message, we'll get the slot number in 'slot'
-        if (1 == sscanf(sim800lNotificationBuffer, "+CMTI: \"SM\",%d", &slot))
-        {
-
-            // Retrieve SMS sender address/phone number.
-            if (!sim800l.getSMSSender(slot, callerIDbuffer, 31))
-            {
-                printf("Received sms but couldn't find SMS message in slot!\n");
+    uint16_t dummy;
+    int num_sms_left = sim800l.getNumSMS(); 
+    // int slot = num_sms_left-1;
+    int slot = num_sms_left;
+    /* Try to read sms and sender number */
+    if(sim800l.readSMS(slot, smsBuffer, 250, &dummy) && sim800l.getSMSSender(slot, callerIDbuffer, 32)){
+        printf("Received sms from %s with msg: %s\n", callerIDbuffer, smsBuffer);
+        while (1){
+            if (sim800l.deleteSMS(slot)){
+                printf("deleted sms\n");
+                break;
             }
-
-            // Retrieve SMS value.
-            uint16_t smslen;
-            // Pass in buffer and max len!
-            if (sim800l.readSMS(slot, smsBuffer, 250, &smslen))
-            {
-                printf("Received sms from %s with msg: %s\n", callerIDbuffer, smsBuffer);
+            else{
+                sim800l.print(F("AT+CMGD=?\r\n"));
             }
-
-            while (1)
-            {
-                if (sim800l.deleteSMS(slot))
-                {
-                    printf("deleted sms\n");
-                    break;
-                }
-                else
-                {
-                    sim800l.print(F("AT+CMGD=?\r\n"));
-                }
-            }
-
-            *number_sending = callerIDbuffer;
-            *msg = smsBuffer;
-            return true;
         }
+    } else{
+        printf("Failed to read sms\n");
+        return -1;
     }
-    return false;
+
+    *number_sending = callerIDbuffer;
+    *msg = smsBuffer;
+    return num_sms_left-1;
 }
 
-bool sms_received_exists()
+bool sms_waiting_cnt_get()
 {
-    return sim800l.available() > 0;
+    return sim800l.getNumSMS() > 0;
 }

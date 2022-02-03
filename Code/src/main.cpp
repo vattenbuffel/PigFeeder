@@ -22,14 +22,17 @@ void setup()
 
 void loop()
 {
-
 	char *sms_msg, *sms_number;
-	if (sms_received_get(&sms_number, &sms_msg))
-	{
-		sms_send(sms_number, "received sms");
+	int sms_left;
+	printf("There are %d sms left\n", sms_waiting_cnt_get());
+	while((sms_left = sms_waiting_cnt_get()) > 0){
+		sms_get(&sms_number, &sms_msg);
+		printf("There are %d sms left\n", sms_left);
+		// sms_send(sms_number, "received sms");
 	}
+	delay(500);
 
-	sleep_activate();
+	// sleep_activate();
 
 	// sms_send("+46706628353", "woke up");
 }
