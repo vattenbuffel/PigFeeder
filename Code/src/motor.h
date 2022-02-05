@@ -8,7 +8,7 @@ bool motor_start();
 
 bool motor_stop();
 
-bool motor_timeout();
+bool motor_loop();
 
 bool motor_time_set_s(float time_s);
 

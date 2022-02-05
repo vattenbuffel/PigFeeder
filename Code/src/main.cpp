@@ -48,7 +48,7 @@ void loop()
 	/* Check for low battery levels */
 
 	/* Check if motor should turn off */
-	motor_timeout();
+	motor_loop();
 
 	sleep_go();
 

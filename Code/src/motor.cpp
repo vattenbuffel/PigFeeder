@@ -2,6 +2,7 @@
 #include "sleep.h"
 
 static float time_on_s = 5;
+static bool on = false;
 static uint32_t time_motor_start_ms = 0;
 
 bool motor_init(){
@@ -21,8 +22,9 @@ bool motor_stop(){
     return true;
 }
 
-bool motor_timeout(){
-    if(time_on_s*1000 + time_motor_start_ms > millis()){
+bool motor_loop(){
+    /* Motor timeout */
+    if(on && time_on_s*1000 + time_motor_start_ms > millis()){
         printf("Motor's active time is out. Turning off\n");
         return motor_stop();
     }
