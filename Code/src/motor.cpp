@@ -4,9 +4,9 @@
 #define MOTOR_GPIO 14
 #define MOTOR_LED_GPIO 33
 
-static float time_on_s = 5;
+static float time_on_s = 1;
 static bool on = false;
-static uint32_t time_motor_start_ms = 0;
+static uint64_t time_motor_start_ms = 0;
 
 bool motor_init(){
     pinMode(MOTOR_GPIO, OUTPUT);
@@ -16,29 +16,29 @@ bool motor_init(){
     return true;
 }
 
-/**
- * @brief Sets motor gpio high and disables sleep
- * 
- * @return true 
- * @return false 
- */
 bool motor_start(){
+    printf("Motor start\n");
     digitalWrite(MOTOR_GPIO, HIGH);
     digitalWrite(MOTOR_LED_GPIO, HIGH);
+    on = true;
+    time_motor_start_ms = millis();
     sleep_disable();
     return true;
 }
 
 bool motor_stop(){
+    printf("Motor stop\n");
     digitalWrite(MOTOR_GPIO, LOW);
     digitalWrite(MOTOR_LED_GPIO, LOW);
+    on = false;
     sleep_enable();
     return true;
 }
 
 bool motor_loop(){
     /* Motor timeout */
-    if(on && time_on_s*1000 + time_motor_start_ms > millis()){
+    bool done = time_on_s*1000 + time_motor_start_ms < millis();
+    if(on && done){
         printf("Motor's active time is out. Turning off\n");
         return motor_stop();
     }
