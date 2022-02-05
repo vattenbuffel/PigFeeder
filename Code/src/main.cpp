@@ -4,10 +4,14 @@
 #include "commands.h"
 #include "motor.h"
 
+#define BLUE_LED 13
+
 
 void setup()
 {
 	Serial.begin(115200);
+	pinMode(BLUE_LED, OUTPUT);
+	digitalWrite(BLUE_LED, HIGH);
 
 	bool res = battery_init();
 	res &= sms_init();
@@ -28,6 +32,7 @@ void setup()
 
 void loop()
 {
+	digitalWrite(BLUE_LED, HIGH);
 	/* Check for incoming sms */
 	char *sms_msg, *sms_number;
 	int sms_left;
@@ -50,6 +55,7 @@ void loop()
 	/* Check if motor should turn off */
 	motor_loop();
 
+	digitalWrite(BLUE_LED, LOW);
 	sleep_go();
 
 	// sms_send("+46706628353", "woke up");

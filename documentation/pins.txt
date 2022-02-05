@@ -10,8 +10,8 @@ BATTERY:
 	35/GPIO35:  BATTERY2
 	
 LEDS:
-	32/GPIO32:  LED1
-	33/GPIO33:  LED2
+	13/GPIO13:  Not sleeping. Internal blue led
+	33/GPIO33:  Motor on
 	
 MOTOR:
 	27/GPIO27:  Enable
