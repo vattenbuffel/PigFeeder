@@ -14,6 +14,6 @@ LEDS:
 	33/GPIO33:  Motor on
 	
 MOTOR:
-	27/GPIO27:  Enable
+	14/GPIO14:  Turn on
 	
 	

@@ -52,7 +52,6 @@ void loop()
 
 	/* Check for low battery levels */
 
-	/* Check if motor should turn off */
 	motor_loop();
 
 	digitalWrite(BLUE_LED, LOW);

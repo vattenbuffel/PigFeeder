@@ -1,23 +1,37 @@
 #include "motor.h"
 #include "sleep.h"
 
+#define MOTOR_GPIO 14
+#define MOTOR_LED_GPIO 33
+
 static float time_on_s = 5;
 static bool on = false;
 static uint32_t time_motor_start_ms = 0;
 
 bool motor_init(){
-    printf("%s not implemented\n", __func__);
+    pinMode(MOTOR_GPIO, OUTPUT);
+    digitalWrite(MOTOR_GPIO, LOW);
+    pinMode(MOTOR_LED_GPIO, OUTPUT);
+    digitalWrite(MOTOR_LED_GPIO, LOW);
     return true;
 }
 
+/**
+ * @brief Sets motor gpio high and disables sleep
+ * 
+ * @return true 
+ * @return false 
+ */
 bool motor_start(){
-    printf("%s not implemented\n", __func__);
+    digitalWrite(MOTOR_GPIO, HIGH);
+    digitalWrite(MOTOR_LED_GPIO, HIGH);
     sleep_disable();
     return true;
 }
 
 bool motor_stop(){
-    printf("%s not implemented\n", __func__);
+    digitalWrite(MOTOR_GPIO, LOW);
+    digitalWrite(MOTOR_LED_GPIO, LOW);
     sleep_enable();
     return true;
 }
@@ -32,7 +46,7 @@ bool motor_loop(){
 }
 
 bool motor_time_set_s(float time_s){
-    printf("%s not implemented\n", __func__);
+    time_on_s = time_s;
     return true;
 }
 

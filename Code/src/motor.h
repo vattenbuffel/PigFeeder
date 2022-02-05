@@ -4,8 +4,21 @@
 
 bool motor_init();
 
+
+/**
+ * @brief Sets motor gpio high and disables sleep
+ * 
+ * @return true 
+ * @return false 
+ */
 bool motor_start();
 
+/**
+ * @brief Sets motor gpio to low and enables sleep
+ * 
+ * @return true 
+ * @return false 
+ */
 bool motor_stop();
 
 bool motor_loop();
