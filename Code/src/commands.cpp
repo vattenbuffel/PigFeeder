@@ -78,6 +78,20 @@ static bool cmd_sleep_time_set(char* sms_number, double number){
     return sms_send(sms_number, msg);
 }
 
+static bool cmd_battery_low_get(char* sms_number){
+    char msg[256];
+    snprintf(msg, sizeof(msg), "Battery low get: %f v.", battery_low_get_v());
+    printf("%s %s\n", __func__, msg);
+    return sms_send(sms_number, msg);
+}
+
+static bool cmd_battery_low_set(char* sms_number, double number){
+    char msg[256];
+    snprintf(msg, sizeof(msg), "Battery low set. Success: %d", battery_low_set_v((float) number));
+    printf("%s %s\n", __func__, msg);
+    return sms_send(sms_number, msg);
+}
+
 static bool cmd_saldo_get(){
     printf("Not implemented\n");
     return true;
@@ -111,7 +125,12 @@ bool command_handle(char* cmd_str, char* sms_number){
         res = cmd_motor_time_get(sms_number );
 	} else if(0 == strcmp(cmd_str, "Battery")){
         res = cmd_battery_get(sms_number);
-	} else if(0 == strcmp(cmd_str, "Sleep time set")){
+	} else if(0 == strcmp(cmd_str, "Battery low set")){
+        if(number_exist){ res = cmd_battery_low_set(sms_number, number); }
+        else{ res = cmd_invalid(sms_number, cmd_str); }
+    } else if(0 == strcmp(cmd_str, "Battery low get")){ 
+        res = cmd_battery_low_get(sms_number);
+    } else if(0 == strcmp(cmd_str, "Sleep time set")){
         if(number_exist){
             res = cmd_sleep_time_set(sms_number, number);
         } else {

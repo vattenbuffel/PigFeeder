@@ -14,6 +14,11 @@ bool battery_init();
  */
 float battery_get(int battery_number);
 
+
+bool battery_low_set_v(float low_voltage_v);
+
+float battery_low_get_v();
+
 void battery_loop();
 
 #endif /* BATTERY_H_ */

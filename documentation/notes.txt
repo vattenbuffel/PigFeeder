@@ -1,6 +1,7 @@
 Battery:
 	Something weird with measuring voltages. When bat_gpio_1 = 34 it measures too low. Changing it to 35 fixes the problem though. 
 	It always measures too low by about 0.05 v. Experiment with different adc settings: https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/adc.html
+	Should an emergency mode be activated when battery way too low and shutdown?
 
 Motor:
 	Not enough current to activate relay. It draws 60 mA. The esp can only deliver 30 mA.

@@ -9,7 +9,7 @@
 #define R1 1000000.f
 #define R2 220000.f
 
-static float battery_low =  10.f;
+static float battery_low_v =  10.f;
 static float sms_time_s = 60;
 
 bool battery_init(){
@@ -19,7 +19,17 @@ bool battery_init(){
     return true;
 }
 
-float ReadVoltage(byte pin){
+bool battery_low_set_v(float low_voltage_v){
+    battery_low_v = low_voltage_v;
+    return true;
+}
+
+float battery_low_get_v(){
+    return battery_low_v;
+}
+
+
+static float ReadVoltage(byte pin){
   double reading = analogRead(pin); // Reference voltage is 3v3 so maximum reading is 3v3 = 4095 in range 0 to 4095
   if(reading < 1 || reading > 4095) return 0;
   // return -0.000000000009824 * pow(reading,3) + 0.000000016557283 * pow(reading,2) + 0.000854596860691 * reading + 0.065440348345433;
@@ -58,11 +68,11 @@ void battery_loop(){
     char sms_text[256];
     sms_text[0] = '\0';
     bool send = false;
-    if (battery_get(1) < battery_low){
+    if (battery_get(1) < battery_low_v){
         send = true;
         snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 1 low level: %f v. ", battery_get(1));
     }
-    if (battery_get(2) < battery_low){
+    if (battery_get(2) < battery_low_v){
         send = true;
         snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 2 low level: %f v. ", battery_get(2));
     }
