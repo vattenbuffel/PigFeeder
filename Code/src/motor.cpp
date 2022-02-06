@@ -1,10 +1,11 @@
 #include "motor.h"
 #include "sleep.h"
+#include "config.h"
 
 #define MOTOR_GPIO 14
 #define MOTOR_LED_GPIO 33
 
-static float time_on_s = 1;
+static float time_on_s = MOTOR_TIME_ON_S;
 static bool on = false;
 static uint64_t time_motor_start_ms = 0;
 

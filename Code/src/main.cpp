@@ -3,11 +3,9 @@
 #include "sleep.h"
 #include "commands.h"
 #include "motor.h"
+#include "config.h"
 
 #define BLUE_LED 13
-
-#define NUMBER_OLOF ""
-#define NUMBER_NOA "+46706628353"
 
 void setup()
 {

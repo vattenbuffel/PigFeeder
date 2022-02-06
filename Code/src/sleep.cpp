@@ -1,7 +1,7 @@
 #include "sleep.h"
+#include "config.h"
 
-// static uint64_t sleep_time_us = 30000000;
-static uint64_t sleep_time_us = 1000000;
+static uint64_t sleep_time_us = SLEEP_TIME_US;
 static bool enabled;
 
 bool sleep_init(){
