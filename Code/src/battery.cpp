@@ -20,8 +20,7 @@ float ReadVoltage(byte pin){
 } // Added an improved polynomial, use either, comment out as required
 
 float map_voltage(float volt){
-    return volt * R1/R2;
-
+    return volt * (R1+R2)/R2;
 }
 
 float battery_get(int battery_number){
