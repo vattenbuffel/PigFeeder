@@ -1,9 +1,6 @@
 #include "sms.h"
 #include "Adafruit_FONA.h"
 
-#define NUMBER_OLOF ""
-#define NUMBER_NOA "+46706628353"
-
 #define SIM800L_RX 27
 #define SIM800L_TX 26
 #define SIM800L_PWRKEY 4
@@ -59,10 +56,6 @@ bool sms_init()
 
     delay(1000);
     printf("GSM SIM800L Ready\n");
-
-    sim800l.sendSMS(NUMBER_NOA, "Started");
-    // sim800l.sendSMS(NUMBER_OLOF, "Started");
-    printf("Sent started sms\n");
 
     // Cleased received sms
     int8_t i = 0;
