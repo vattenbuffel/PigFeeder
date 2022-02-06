@@ -19,6 +19,10 @@ bool battery_low_set_v(float low_voltage_v);
 
 float battery_low_get_v();
 
+bool battery_time_set_s(float time_s);
+
+float battery_time_get_s();
+
 void battery_loop();
 
 #endif /* BATTERY_H_ */

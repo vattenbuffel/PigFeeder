@@ -19,6 +19,15 @@ bool battery_init(){
     return true;
 }
 
+bool battery_time_set_s(float time_s){
+    sms_time_s = time_s;
+    return true;
+}
+
+float battery_time_get_s(){
+    return sms_time_s;
+}
+
 bool battery_low_set_v(float low_voltage_v){
     battery_low_v = low_voltage_v;
     return true;
