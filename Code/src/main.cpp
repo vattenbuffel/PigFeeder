@@ -31,7 +31,7 @@ void setup()
 	// Publish a good started message here with motor time on and batteries
 	char sms_start[256];
 	snprintf(sms_start, sizeof(sms_start), "Started. Battery 1: %f v, battery 2: %f v, motor on time: %f s, battery low: %f v, sleep time: %f s, time between warnings: %f s", battery_get(1), battery_get(2), motor_time_get_s(), -1.f, sleep_time_get_s(), -1.f);
-    // sms_send(NUMBER_NOA, sms_start);
+    sms_send(NUMBER_NOA, sms_start);
     // sms_send(NUMBER_OLOF, sms_start);
     printf("Sent started sms: %s\n", sms_start);
 	printf("Done with setup\n");
@@ -43,7 +43,7 @@ void loop()
 	/* Check for incoming sms */
 	char *sms_msg, *sms_number;
 	int sms_left;
-	printf("There are %d sms left\n", sms_waiting_cnt_get());
+	// printf("There are %d sms left\n", sms_waiting_cnt_get());
 	while((sms_left = sms_waiting_cnt_get()) > 0){
 		if(false == sms_get(&sms_number, &sms_msg)){
 			printf("Failed to get sms\n");
@@ -52,13 +52,11 @@ void loop()
 
 		command_handle(sms_msg, sms_number);
 
-		printf("There are %d sms left\n", sms_left);
 		// sms_send(sms_number, "received sms");
 	}
-	delay(500);
+	delay(500); // maybe remove
 
-	/* Check for low battery levels */
-
+	battery_loop();
 	motor_loop();
 
 	digitalWrite(BLUE_LED, LOW);

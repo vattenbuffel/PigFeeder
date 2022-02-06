@@ -93,7 +93,7 @@ static bool cmd_invalid(char* sms_number, char* cmd_str){
 
 bool command_handle(char* cmd_str, char* sms_number){
     bool res = true;
-    double number;
+    double number = 0;
 
     bool number_exist = extract_number(cmd_str, &number);
 

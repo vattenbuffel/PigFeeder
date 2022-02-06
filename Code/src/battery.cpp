@@ -1,9 +1,16 @@
 #include "battery.h"
+#include "sms.h"
+
+#define NUMBER_OLOF ""
+#define NUMBER_NOA "+46706628353"
 
 #define BATTERY_GPIO_1 35
 #define BATTERY_GPIO_2 34
 #define R1 1000000.f
 #define R2 220000.f
+
+static float battery_low =  10.f;
+static float sms_time_s = 60;
 
 bool battery_init(){
     pinMode(BATTERY_GPIO_1, INPUT);
@@ -39,4 +46,34 @@ float battery_get(int battery_number){
     float volt = ReadVoltage(pin);
     float volt_map = map_voltage(volt);
     return volt_map;
+}
+
+void battery_loop(){
+    static uint64_t sms_prev_ms = -sms_time_s;
+
+    if(millis() - sms_prev_ms   < (uint64_t)(sms_time_s * 1000)){
+        return;
+    }
+
+    char sms_text[256];
+    sms_text[0] = '\0';
+    bool send = false;
+    if (battery_get(1) < battery_low){
+        send = true;
+        snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 1 low level: %f v. ", battery_get(1));
+    }
+    if (battery_get(2) < battery_low){
+        send = true;
+        snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 2 low level: %f v. ", battery_get(2));
+    }
+
+    if(send){
+        printf("battery too low. Sending warning sms\n");
+        sms_send(NUMBER_NOA, sms_text);
+        sms_prev_ms = millis();
+        // sms_send(NUMBER_OLOF, sms_text);
+    }
+
+
+    
 }
