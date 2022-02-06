@@ -1,7 +1,7 @@
 #include "battery.h"
 
-#define BATTERY_GPIO_1 0
-#define BATTERY_GPIO_2 2
+#define BATTERY_GPIO_1 35
+#define BATTERY_GPIO_2 34
 #define R1 1000000.f
 #define R2 220000.f
 

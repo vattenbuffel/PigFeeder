@@ -6,6 +6,12 @@
 
 bool battery_init();
 
-float battery_get(int batter_number);
+/**
+ * @brief Measures battery voltage and returns it. 
+ * 
+ * @param battery_number 1 or 2
+ * @return float 
+ */
+float battery_get(int battery_number);
 
 #endif /* BATTERY_H_ */
