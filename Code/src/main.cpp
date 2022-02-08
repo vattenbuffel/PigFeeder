@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "sms.h"
 #include "battery.h"
 #include "sleep.h"
