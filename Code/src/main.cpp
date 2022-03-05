@@ -29,7 +29,7 @@ void setup()
 
 	// Publish started message with motor time on and batteries
 	char sms_start[256];
-	snprintf(sms_start, sizeof(sms_start), "Started. Battery 1: %f v, battery 2: %f v, motor on time: %f s, battery low: %f v, sleep time: %f s, time between warnings: %f s", battery_get_v(1), battery_get_v(2), motor_time_get_s(), -1.f, sleep_time_get_s(), -1.f);
+	snprintf(sms_start, sizeof(sms_start), "Started. Battery 1: %f v, battery 2: %f v, motor on time: %f s, battery low: %f v, sleep time: %f s, time between warnings: %f s", battery_get_v(1), battery_get_v(2), motor_time_get_s(), battery_low_get_v(), sleep_time_get_s(), battery_time_get_s());
     sms_send(NUMBER_NOA, sms_start);
     // sms_send(NUMBER_OLOF, sms_start);
     printf("Sent started sms: %s\n", sms_start);
