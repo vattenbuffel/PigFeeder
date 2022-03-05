@@ -21,7 +21,7 @@ void setup()
 	if (!res) {
 		printf("Failed with init\n");
 		while (1) {
-			delay(-1);
+			delay(-1); /* Delay for max duration */
 		}
 	}
 
@@ -38,6 +38,7 @@ void setup()
 
 void loop()
 {
+	/* Signal that esp is awake */
 	digitalWrite(BLUE_LED, HIGH);
 	/* Check for incoming sms */
 	char *sms_msg, *sms_number;
@@ -57,6 +58,7 @@ void loop()
 	battery_loop();
 	motor_loop();
 
+	/* Signal that esp is asleep */
 	digitalWrite(BLUE_LED, LOW);
 	sleep_go();
 
