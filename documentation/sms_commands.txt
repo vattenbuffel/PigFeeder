@@ -6,7 +6,7 @@ Battery: 		   Sends an sms the voltage levels of the batteries
 Battery low set:   Sets the voltage at which warning messages are sent
 Battery low get:   Sends an sms with the voltage at which warning messages are sent
 Sms interval get:  Sends an sms with the time inbetween warning messages
-Sms interval set:  Sends an sms with the time inbetween warning messages
+Sms interval set:  Sets the time inbetween warning messages
 Sleep time set x:  Sets the sleep time
 Sleep time get:    Sends an sms with the sleep time
 Saldo check:       Check saldo. Not implemented.
