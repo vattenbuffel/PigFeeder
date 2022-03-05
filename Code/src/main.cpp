@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include "sms.h"
 #include "battery.h"
 #include "sleep.h"
@@ -20,15 +21,15 @@ void setup()
 	if (!res) {
 		printf("Failed with init\n");
 		while (1) {
-			delay(-1);
+			delay(-1); /* Delay for max duration */
 		}
 	}
 
 	analogReadResolution(12);
 
-	// Publish a good started message here with motor time on and batteries
+	// Publish started message with motor time on and batteries
 	char sms_start[256];
-	snprintf(sms_start, sizeof(sms_start), "Started. Battery 1: %f v, battery 2: %f v, motor on time: %f s, battery low: %f v, sleep time: %f s, time between warnings: %f s", battery_get(1), battery_get(2), motor_time_get_s(), -1.f, sleep_time_get_s(), -1.f);
+	snprintf(sms_start, sizeof(sms_start), "Started. Battery 1: %f v, battery 2: %f v, motor on time: %f s, battery low: %f v, sleep time: %f s, time between warnings: %f s", battery_get_v(1), battery_get_v(2), motor_time_get_s(), battery_low_get_v(), sleep_time_get_s(), battery_time_get_s());
     sms_send(NUMBER_NOA, sms_start);
     // sms_send(NUMBER_OLOF, sms_start);
     printf("Sent started sms: %s\n", sms_start);
@@ -37,6 +38,7 @@ void setup()
 
 void loop()
 {
+	/* Signal that esp is awake */
 	digitalWrite(BLUE_LED, HIGH);
 	/* Check for incoming sms */
 	char *sms_msg, *sms_number;
@@ -52,11 +54,11 @@ void loop()
 
 		// sms_send(sms_number, "received sms");
 	}
-	delay(500); // maybe remove
 
 	battery_loop();
 	motor_loop();
 
+	/* Signal that esp is asleep */
 	digitalWrite(BLUE_LED, LOW);
 	sleep_go();
 

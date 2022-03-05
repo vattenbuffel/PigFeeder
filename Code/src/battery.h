@@ -12,7 +12,7 @@ bool battery_init();
  * @param battery_number 1 or 2
  * @return float 
  */
-float battery_get(int battery_number);
+float battery_get_v(int battery_number);
 
 
 bool battery_low_set_v(float low_voltage_v);

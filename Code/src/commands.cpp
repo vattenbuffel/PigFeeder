@@ -27,9 +27,9 @@ static bool extract_number(char* str, double *number){
     return true;
 }
 
-static bool cmd_battery_get(char* sms_number){
-    float b1 = battery_get(1);
-    float b2 = battery_get(2);
+static bool cmd_battery_get_v(char* sms_number){
+    float b1 = battery_get_v(1);
+    float b2 = battery_get_v(2);
     char msg[256];
     snprintf(msg, sizeof(msg), "Battery 1: %f, battery 2: %f", b1, b2);
     printf("%s %s\n", __func__, msg);
@@ -138,7 +138,7 @@ bool command_handle(char* cmd_str, char* sms_number){
 	} else if(0 == strcmp(cmd_str, "Motor time get")){
         res = cmd_motor_time_get(sms_number );
 	} else if(0 == strcmp(cmd_str, "Battery")){
-        res = cmd_battery_get(sms_number);
+        res = cmd_battery_get_v(sms_number);
 	} else if(0 == strcmp(cmd_str, "Battery low set")){
         if(number_exist){ res = cmd_battery_low_set(sms_number, number); }
         else{ res = cmd_invalid(sms_number, cmd_str); }
