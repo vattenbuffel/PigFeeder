@@ -1,0 +1,1 @@
+npn transistor relay: https://www.electronics-tutorials.ws/blog/relay-switch-circuit.html
