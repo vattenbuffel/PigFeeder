@@ -78,7 +78,6 @@ void battery_loop(){
     }
 
     char sms_text[256];
-    sms_text[0] = '\0';
     bool send = false;
     if (battery_get_v(1) < battery_low_v){
         send = true;

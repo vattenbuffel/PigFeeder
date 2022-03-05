@@ -53,7 +53,6 @@ void loop()
 
 		// sms_send(sms_number, "received sms");
 	}
-	delay(500); // maybe remove
 
 	battery_loop();
 	motor_loop();
