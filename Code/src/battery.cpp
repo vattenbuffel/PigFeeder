@@ -50,7 +50,7 @@ float map_voltage(float volt){
     return volt * (R1+R2)/R2;
 }
 
-float battery_get(int battery_number){
+float battery_get_v(int battery_number){
     byte pin;
     if (battery_number == 1){
         pin = BATTERY_GPIO_1;
@@ -80,13 +80,13 @@ void battery_loop(){
     char sms_text[256];
     sms_text[0] = '\0';
     bool send = false;
-    if (battery_get(1) < battery_low_v){
+    if (battery_get_v(1) < battery_low_v){
         send = true;
-        snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 1 low level: %f v. ", battery_get(1));
+        snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 1 low level: %f v. ", battery_get_v(1));
     }
-    if (battery_get(2) < battery_low_v){
+    if (battery_get_v(2) < battery_low_v){
         send = true;
-        snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 2 low level: %f v. ", battery_get(2));
+        snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 2 low level: %f v. ", battery_get_v(2));
     }
 
     if(send){
