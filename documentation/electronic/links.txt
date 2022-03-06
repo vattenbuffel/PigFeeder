@@ -1,1 +1,2 @@
 npn transistor relay: https://www.electronics-tutorials.ws/blog/relay-switch-circuit.html
+PCB: https://www.electrokit.com/produkt/experimentkort-1-hal-80x120mm-genomplaterade-hal/
