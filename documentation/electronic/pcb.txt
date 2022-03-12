@@ -21,8 +21,6 @@
 		Leg1: L21->L20, B2
 		Leg2: L17->J17
 	
-Soldered this far.
-
 2-terminal:
 	Leg1: J17->J14->H14, GND
 	Leg2: H12, Relay out

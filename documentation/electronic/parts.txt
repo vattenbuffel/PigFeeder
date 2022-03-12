@@ -1,1 +1,9 @@
-TODO
+Relay:
+    https://www.electrokit.com/produkt/rela-srd-1-pol-vaxlande-5v/
+
+MCU:
+    ESP32 SIM800l
+
+transistor:
+    NPN
+
