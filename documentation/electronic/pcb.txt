@@ -1,0 +1,68 @@
+3-terminal: 
+	H28->GND
+	H26->B1
+	H24->B2
+	
+1M resistor: 
+	1: 
+		Leg1: H26->J26, B1
+		Leg2: J21
+		
+	2: 
+		Leg1: H24->L24, B2
+		Leg2: L21
+
+220k resistor:
+	1: 
+		Leg1: J21->J20, B1
+		Leg2: J17->J28
+		
+	2: 
+		Leg1: L21->L20, B2
+		Leg2: L17->J17
+	
+2-terminal:
+	Leg1: J17->J14->H14, GND
+	Leg2: H12, Relay out
+
+DC-DC:
+	IN+:  H26->L26, L10->L26, B1
+	IN-:  H28->L28, L3->L28, GND
+	OUT+: b10->K20, 5v
+	OUT-: b3->L3, GND
+
+ESP32:
+	R30->m30
+	R20->m20
+	f20->f3->b3 GND
+	V20->J21, Measure B1
+	Y20->L20, Measure B2
+	R20: 3.3v
+
+10k resistor:
+	Leg1: f19->f20, GND 
+	Leg2: d16
+
+1k resistor:
+	Leg1: d19->d20
+	Leg2: d16
+
+npn transistor:
+	Emitter: b15->b3, GND
+	Collector: c15->Relay spole
+	Base: d15->d16
+
+330 restior:
+	Leg1: Z20->Z19
+	Leg2: Z15
+
+Led:
+	Leg1: Z15->Z14
+	Leg2: b14->b13->b14, GND
+
+Relay:
+	Coil-: x->x , GND
+	Coil+: x->x 
+	NC: GND
+	NO: x->x , B1
+	OUT: X->H12, motor + output
