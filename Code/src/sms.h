@@ -5,7 +5,7 @@
 
 bool sms_init();
 
-bool sms_send( char *number, char *msg);
+bool sms_send(char *number, char *msg);
 
 bool sms_get(char** number_sending, char** msg);
 

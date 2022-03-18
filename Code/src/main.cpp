@@ -8,6 +8,23 @@
 
 #define BLUE_LED 13
 
+/**
+ * @brief Blink blue led 5 timer then sleep, then repeat blink and sleep forever
+ * 
+ */
+void error(){
+	while (1) {
+		/* Blink to signal error */
+		for(int i = 0; i < 5; i++){
+			delay(100);
+			digitalWrite(BLUE_LED, HIGH);
+			delay(100);
+			digitalWrite(BLUE_LED, LOW);
+		}
+		sleep_go();
+	}
+}
+
 void setup()
 {
 	Serial.begin(115200);
@@ -20,9 +37,7 @@ void setup()
 	res &= motor_init();
 	if (!res) {
 		printf("Failed with init\n");
-		while (1) {
-			delay(-1); /* Delay for max duration */
-		}
+		error();
 	}
 
 	analogReadResolution(12);
@@ -54,6 +69,7 @@ void loop()
 
 		// sms_send(sms_number, "received sms");
 	}
+	delay(500);
 
 	battery_loop();
 	motor_loop();
