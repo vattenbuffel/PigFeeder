@@ -90,8 +90,12 @@ void battery_loop(){
 
     if(send){
         printf("battery too low. Sending warning sms\n");
-        sms_send(NUMBER_NOA, sms_text);
-        // sms_send(NUMBER_OLOF, sms_text);
+        if(!sms_send(NUMBER_NOA, sms_text)) 
+            printf("%s: Failed to send sms to Noa\n", __func__);
+        if(!sms_send(NUMBER_OLOF, sms_text))
+            printf("%s: Failed to send sms to Olof\n", __func__);
+        if(!sms_send(NUMBER_HANNA, sms_text))
+            printf("%s: Failed to send sms to Hanna\n", __func__);
         sent_sms = true;
         sms_prev_ms = millis();
     }

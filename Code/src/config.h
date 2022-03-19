@@ -2,14 +2,15 @@
 #define CONFIG_H_
 
 #define NUMBER_NOA "+46706628353"
-#define NUMBER_OLOF ""
+#define NUMBER_OLOF "+46705684146"
+#define NUMBER_HANNA "+46763107286"
 
 // Battery
-#define BATTERY_LOW_V 10.f
+#define BATTERY_LOW_V 11.f
 #define BATTERY_SMS_TIME_S 3600
 
 // Motor
-#define MOTOR_TIME_ON_S 1.f
+#define MOTOR_TIME_ON_S 10.f
 
 // Sleep
 #define SLEEP_TIME_US 10000000
