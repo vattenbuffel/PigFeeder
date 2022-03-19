@@ -1,5 +1,6 @@
 #include "sms.h"
 #include "Adafruit_FONA.h"
+#include "config.h"
 
 #define SIM800L_RX 27
 #define SIM800L_TX 26
@@ -15,6 +16,24 @@ Adafruit_FONA sim800l = Adafruit_FONA(SIM800L_PWRKEY);
 char sim800lNotificationBuffer[64]; //for notifications from the FONA
 char smsBuffer[250];
 char callerIDbuffer[32]; //we'll store the SMS sender number in here
+
+bool sms_all(char* msg){
+    bool res = true;
+
+    if(!(res &= sms_send(NUMBER_NOA, msg)))
+		printf("%s: Failed to send sms to Noa\n", __func__);
+	delay(10000);
+
+	if(!(res &= sms_send(NUMBER_HANNA, msg)))
+		printf("%s: Failed to send sms to Hanna\n", __func__);
+	delay(10000);
+
+    if(!(res &= sms_send(NUMBER_OLOF, msg)))
+		printf("%s: Failed to send sms to Olof\n", __func__);
+	delay(10000);
+
+    return res;
+}
 
 bool sms_init()
 {
