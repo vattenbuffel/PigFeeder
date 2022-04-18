@@ -30,6 +30,10 @@ bool sms_all(char* msg){
 
     if(!(res &= sms_send(NUMBER_OLOF, msg)))
 		printf("%s: Failed to send sms to Olof\n", __func__);
+    delay(10000);
+
+    if(!(res &= sms_send(NUMBER_GRIS_ANDERS, msg)))
+		printf("%s: Failed to send sms to Olof\n", __func__);
 	delay(10000);
 
     return res;
