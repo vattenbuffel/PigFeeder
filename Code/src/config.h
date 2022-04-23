@@ -9,6 +9,7 @@
 // Battery
 #define BATTERY_LOW_V 11.f
 #define BATTERY_SMS_TIME_S 3600
+#define BATTERY_LOW_TIME_US 300000000
 
 // Motor
 #define MOTOR_TIME_ON_S 10.f

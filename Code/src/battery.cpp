@@ -1,6 +1,7 @@
 #include "battery.h"
 #include "sms.h"
 #include "config.h"
+#include <stdint.h>
 
 
 #define BATTERY_GPIO_1 32
@@ -11,11 +12,36 @@
 static float battery_low_v =  BATTERY_LOW_V;
 static float sms_time_s = BATTERY_SMS_TIME_S;
 
+/* The battery must be low for a certain period for a warning to be sent */
+static int64_t battery_low_time_us = BATTERY_LOW_TIME_US;
+static int64_t wrn_pending_time_us_1;
+static int64_t wrn_pending_time_us_2;
+
 bool battery_init(){
     pinMode(BATTERY_GPIO_1, INPUT);
     pinMode(BATTERY_GPIO_2, INPUT);
+    wrn_pending_time_us_1 = -1;
+    wrn_pending_time_us_2 = -1;
 
     return true;
+}
+
+bool battery_low_time_set_us(uint64_t time_us){
+    battery_low_time_us = time_us;
+	printf("Setup battery low time to %llu Seconds\n", battery_low_time_us/1000000);
+    return true;
+}
+
+bool sleep_time_set_s(float time_s){
+    return battery_low_time_set_us((uint64_t) (time_s*1000000));
+}
+
+uint64_t battery_low_time_get_us(){
+    return battery_low_time_us;
+}
+
+float battery_low_time_get_s(){
+    return battery_low_time_us/1000000.f;
 }
 
 bool battery_time_set_s(float time_s){
@@ -80,12 +106,25 @@ void battery_loop(){
     char sms_text[256];
     bool send = false;
     if (battery_get_v(1) < battery_low_v){
-        send = true;
-        snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 1 low level: %f v. ", battery_get_v(1));
+        if(-1 == wrn_pending_time_us_1){
+            wrn_pending_time_us_1 = esp_timer_get_time();
+        } else if(esp_timer_get_time() - wrn_pending_time_us_1 > battery_low_time_us){
+            send = true;
+            snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 1 low level: %f v. ", battery_get_v(1));
+        }
+    } else{
+        wrn_pending_time_us_1 = -1;
     }
+
     if (battery_get_v(2) < battery_low_v){
-        send = true;
-        snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 2 low level: %f v. ", battery_get_v(2));
+        if(-1 == wrn_pending_time_us_2){
+            wrn_pending_time_us_2 = esp_timer_get_time();
+        } else if(esp_timer_get_time() - wrn_pending_time_us_2 > battery_low_time_us){
+            send = true;
+            snprintf(sms_text+strlen(sms_text), sizeof(sms_text) - strlen(sms_text), "Battry 2 low level: %f v. ", battery_get_v(2));
+        }
+    } else{
+        wrn_pending_time_us_2 = -1;
     }
 
     if(send){
@@ -94,7 +133,4 @@ void battery_loop(){
         sent_sms = true;
         sms_prev_ms = millis();
     }
-
-
-    
 }
